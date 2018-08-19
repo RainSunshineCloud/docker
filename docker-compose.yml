@@ -11,12 +11,13 @@ services:
     volumes:
       - "./conf/nginx:/etc/nginx/conf.d"
       - "./app:/app"
-      - "./log/nginx:/var/nginx"
+      - "./log/nginx:/var/log/nginx"
     container_name: nginx
   php:
     image: php:7.1-fpm
     volumes:
       - "./log/php-fpm:/log" 
+      - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
       - "./app:/app"
     depends_on:
       - mysql
