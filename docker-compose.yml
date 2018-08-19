@@ -10,7 +10,7 @@ services:
       - php
     volumes:
       - "./conf/nginx:/etc/nginx/conf.d"
-      - "/app:/app"
+      - "./app:/app"
       - "./log/nginx:/var/log/nginx"
     container_name: nginx
   php:
@@ -18,7 +18,7 @@ services:
     volumes:
       - "./log/php-fpm:/log" 
       - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
-      - "/app:/app"
+      - "./app:/app"
     depends_on:
       - mysql
       - redis
