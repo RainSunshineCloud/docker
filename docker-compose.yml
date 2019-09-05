@@ -1,0 +1,46 @@
+version: "2"
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - php
+    links:
+      - php
+    volumes:
+      - "./conf/nginx:/etc/nginx/conf.d"
+      - "./app:/app"
+      - "./log/nginx:/var/log/nginx"
+    container_name: nginx
+  php:
+    image: 931035553/php:7.1-fpm
+    volumes:
+      - "./log/php-fpm:/log" 
+      - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
+      - "./app:/app"
+    depends_on:
+      - mysql
+      - redis
+    container_name: php
+    links:
+      - mysql
+      - redis
+  mysql:
+   image: mysql
+   ports:
+      - "3307:3306"
+   volumes:
+      - "./conf/mysql:/etc/mysql/conf.d"
+      - "./data/mysql:/var/lib/mysql"
+   environment:
+      -  MYSQL_ROOT_PASSWORD=12
+   container_name: mysql
+  redis:
+   image: redis
+   ports:
+     - "6379:6379"
+   volumes:
+    - "./conf/redis/redis.conf:/usr/local/etc/redis.conf"
+   command: ["redis-server","/usr/local/etc/redis.conf"]
+   container_name: redis
