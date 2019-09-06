@@ -1,7 +1,7 @@
-version: "2"
+version: "3"
 services:
   nginx:
-    image: nginx
+    image: registry.cn-shenzhen.aliyuncs.com/rain_sunshine_cloud/nginx
     ports:
       - "8080:80"
     depends_on:
@@ -10,14 +10,17 @@ services:
       - php
     volumes:
       - "./conf/nginx:/etc/nginx/conf.d"
-      - "./app:/app"
-      - "./log/nginx:/var/log/nginx"
+      - "./app:/data/nginx/web/"
+      - "./log/nginx:/data/nginx/log/"
     container_name: nginx
+    hostname: nginx
   php:
-    image: 931035553/php:7.1-fpm
+    image: registry.cn-shenzhen.aliyuncs.com/rain_sunshine_cloud/php
     volumes:
-      - "./log/php-fpm:/log" 
+      - "./log/php:/data/php/log"
+      - "./app:/data/nginx/web"
       - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
+      - "./conf/php/php-fpm.conf:/usr/local/etc/php-fpm.d/docker.conf"
       - "./app:/app"
     depends_on:
       - mysql
@@ -26,6 +29,7 @@ services:
     links:
       - mysql
       - redis
+    hostname: php
   mysql:
    image: mysql
    ports:
@@ -36,6 +40,7 @@ services:
    environment:
       -  MYSQL_ROOT_PASSWORD=12
    container_name: mysql
+   hostname: mysql
   redis:
    image: redis
    ports:
@@ -44,3 +49,4 @@ services:
     - "./conf/redis/redis.conf:/usr/local/etc/redis.conf"
    command: ["redis-server","/usr/local/etc/redis.conf"]
    container_name: redis
+   hostname: redis
