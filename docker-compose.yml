@@ -25,28 +25,41 @@ services:
     depends_on:
       - mysql
       - redis
+      - mongo
     container_name: php
     links:
       - mysql
       - redis
+      - mongo
     hostname: php
   mysql:
-   image: mysql
-   ports:
+    image: mysql
+    ports:
       - "3307:3306"
-   volumes:
+    volumes:
       - "./conf/mysql:/etc/mysql/conf.d"
       - "./data/mysql:/var/lib/mysql"
-   environment:
+    environment:
       -  MYSQL_ROOT_PASSWORD=12
-   container_name: mysql
-   hostname: mysql
+    container_name: mysql
+    hostname: mysql
   redis:
-   image: redis
-   ports:
-     - "6379:6379"
-   volumes:
-    - "./conf/redis/redis.conf:/usr/local/etc/redis.conf"
-   command: ["redis-server","/usr/local/etc/redis.conf"]
-   container_name: redis
-   hostname: redis
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./conf/redis/redis.conf:/usr/local/etc/redis.conf"
+    command: ["redis-server","/usr/local/etc/redis.conf"]
+    container_name: redis
+    hostname: redis
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - "./data/mongo:/data/db"
+      - "./conf/mongo/mongo.conf:/data/configdb/mongo.conf"
+      - "./log/mongo/:/data/log/"
+    command: ["mongod","--config","/data/configdb/mongo.conf"]
+    container_name: mongo
+    hostname: mongo
